@@ -1,10 +1,6 @@
 import React from 'react';
-import { BrandMark } from '@platform-system/design-ui/components/brand-mark';
-import { Button } from '@platform-system/design-ui/components/button';
+import { BrandMark, Button, SidebarNavItem, SidebarShell, UserIdentity } from '@platform-system/design-ui';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { SidebarNavItem } from '@platform-system/design-ui/components/sidebar-nav';
-import { SidebarShell } from '@platform-system/design-ui/components/sidebar-shell';
-import { UserIdentity } from '@platform-system/design-ui/components/user-identity';
 import { 
   User, 
   Wallet, 

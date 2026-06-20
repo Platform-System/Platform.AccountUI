@@ -48,10 +48,4 @@ jobs:
     with:
       image_name: 'platform-account-ui'
       push_image: true
-      build_args: |
-        VITE_API_URL=${{ vars.PUBLIC_API_URL }}
-        VITE_PUBLIC_ACCOUNT_URL=${{ vars.PUBLIC_ACCOUNT_URL }}
-        VITE_KEYCLOAK_URL=${{ vars.PUBLIC_AUTH_URL }}
-        VITE_KEYCLOAK_REALM=${{ vars.KEYCLOAK_REALM }}
-        VITE_KEYCLOAK_CLIENT_ID=${{ vars.ACCOUNT_CLIENT_ID }}
     secrets: inherit

@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from '@platform-system/design-ui/components/button';
-import { OverlayBackdrop } from '@platform-system/design-ui/components/overlay-backdrop';
+import { Button, OverlayBackdrop, PlatformSwitcherMenu, Toaster as SonnerToaster, TopbarShell } from '@platform-system/design-ui';
 import { Outlet } from 'react-router-dom';
-import { Toaster as SonnerToaster } from '@platform-system/design-ui/components/sonner';
-import { TopbarShell } from '@platform-system/design-ui/components/topbar-shell';
 import { Menu, HelpCircle, Globe, ShoppingBag, Shield } from 'lucide-react';
 import { Sidebar } from './Sidebar';
-import { PlatformSwitcherMenu } from '@platform-system/design-ui/components/platform-switcher-menu';
 
 const portals = [
   { id: 'customer', name: 'Cổng khách hàng', url: 'https://nyxoris.com', icon: <Globe size={16} />, active: true },

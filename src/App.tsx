@@ -5,7 +5,7 @@ import { AccountLayout } from './layouts/AccountLayout';
 import { ProfileScreen } from './features/account/screens/ProfileScreen';
 import { WalletScreen } from './features/account/screens/WalletScreen';
 import { SecurityScreen } from './features/account/screens/SecurityScreen';
-import { ThemeProvider } from '@platform-system/design-ui/theme-provider';
+import { ThemeProvider } from '@platform-system/design-ui';
 import { RootErrorBoundary } from './core/RootErrorBoundary';
 
 const queryClient = new QueryClient({

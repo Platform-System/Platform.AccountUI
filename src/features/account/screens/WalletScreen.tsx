@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Button } from "@platform-system/design-ui/components/button";
-import { Input } from "@platform-system/design-ui/components/input";
+import { Button, Input, cn } from '@platform-system/design-ui';
 import { useAccount } from "../hooks/use-account";
 import { useTranslations } from "../translations/vi";
 import { toast } from "sonner";
@@ -18,7 +17,6 @@ import {
   CheckCircle2,
   XCircle
 } from "lucide-react";
-import { cn } from "@platform-system/design-ui/lib/cn";
 
 export function WalletScreen() {
   const t = useTranslations("Account");

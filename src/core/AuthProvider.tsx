@@ -1,9 +1,13 @@
 import React from 'react';
-import { Spinner } from '@platform-system/design-ui/components/spinner';
+import { Spinner } from '@platform-system/design-ui';
 import { keycloak } from './keycloak';
 import { AuthContext, type AuthUser } from './auth-context';
 
-const accountAppUrl = import.meta.env.VITE_PUBLIC_ACCOUNT_URL;
+const getEnv = (key: string): string => {
+  return (window as unknown as Record<string, Record<string, string>>).__ENV__?.[key] || import.meta.env[key] || '';
+};
+
+const accountAppUrl = getEnv('VITE_PUBLIC_ACCOUNT_URL');
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInitialized, setIsInitialized] = React.useState(false);

@@ -1,4 +1,4 @@
-import { Button } from "@platform-system/design-ui/components/button";
+import { Button } from '@platform-system/design-ui';
 import { useTranslations } from "../translations/vi";
 import { useAuth } from "../../../core/auth-context";
 import { 
