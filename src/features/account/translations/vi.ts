@@ -92,12 +92,13 @@ export const translations = {
 export type TranslationKey = keyof typeof translations.Account;
 
 export function useTranslations(namespace: "Account") {
-  return (key: TranslationKey | string, variables?: Record<string, any>) => {
+  return (key: TranslationKey | string, variables?: Record<string, unknown>) => {
     const dict = translations[namespace];
-    let val = (dict as any)[key] || key;
+    let val = (dict as Record<string, string>)[key] || key;
     if (variables) {
       Object.keys(variables).forEach((k) => {
-        val = val.replace(`{${k}}`, variables[k]);
+        const v = variables[k];
+        val = val.replace(`{${k}}`, v !== undefined && v !== null ? String(v) : '');
       });
     }
     return val;

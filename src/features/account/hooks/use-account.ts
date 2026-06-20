@@ -75,11 +75,20 @@ export interface WalletStatementResponse {
   createdAtTo?: string;
 }
 
+interface UserProfileDetails {
+  displayName?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  gender?: string | null;
+  dateOfBirth?: string | null;
+  phoneNumber?: string | null;
+}
+
 async function fetchFullProfile(profile: AccountProfileResponse): Promise<AccountProfileResponse> {
   const [avatarRes, coverRes, profileRes] = await Promise.allSettled([
     apiClient.get<Result<{ url?: string | null }>>("/api/identity/users/me/images/avatar"),
     apiClient.get<Result<{ url?: string | null }>>("/api/identity/users/me/images/cover"),
-    apiClient.get<Result<any>>("/api/identity/users/me/profile")
+    apiClient.get<Result<UserProfileDetails>>("/api/identity/users/me/profile")
   ]);
 
   if (avatarRes.status === "fulfilled" && avatarRes.value.data?.success && avatarRes.value.data.data?.url) {
