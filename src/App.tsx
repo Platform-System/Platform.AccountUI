@@ -1,10 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './core/AuthProvider';
 import { AccountLayout } from './layouts/AccountLayout';
+import { WelcomeScreen } from './features/account/screens/WelcomeScreen';
 import { ProfileScreen } from './features/account/screens/ProfileScreen';
 import { WalletScreen } from './features/account/screens/WalletScreen';
 import { SecurityScreen } from './features/account/screens/SecurityScreen';
+import { MediaScreen } from './features/account/screens/MediaScreen';
 import { ThemeProvider } from '@platform-system/design-ui';
 import { RootErrorBoundary } from './core/RootErrorBoundary';
 
@@ -25,11 +27,12 @@ function App() {
           <AuthProvider>
             <BrowserRouter>
               <Routes>
+                <Route path="/" element={<WelcomeScreen />} />
                 <Route element={<AccountLayout />}>
-                  <Route path="/" element={<Navigate to="/profile" replace />} />
                   <Route path="/profile" element={<ProfileScreen />} />
                   <Route path="/wallet" element={<WalletScreen />} />
                   <Route path="/security" element={<SecurityScreen />} />
+                  <Route path="/media" element={<MediaScreen />} />
                 </Route>
               </Routes>
             </BrowserRouter>

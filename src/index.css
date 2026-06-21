@@ -4,25 +4,33 @@
 @source "../node_modules/@platform-system/design-ui/src/**/*.tsx";
 @import "@platform-system/design-ui/index.css";
 
+:root {
+  --scrollbar-thumb: var(--scrollbar-thumb-zinc);
+  --scrollbar-thumb-hover: var(--scrollbar-thumb-zinc-hover);
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+html,
 body {
-  font-family: var(--font-family);
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   background-color: var(--background);
   color: var(--foreground);
   margin: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
 }
 
-a {
+a:not([data-slot="button"]) {
   text-decoration: none;
   color: inherit;
 }

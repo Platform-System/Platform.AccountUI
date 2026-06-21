@@ -1,4 +1,4 @@
-import { Button } from '@platform-system/design-ui';
+import { Button, cn } from '@platform-system/design-ui';
 import { useTranslations } from "../translations/vi";
 import { useAuth } from "../../../core/auth-context";
 import { 
@@ -31,18 +31,19 @@ export function SecurityScreen() {
           {/* Main info panel */}
           <div className="lg:col-span-8 space-y-6">
             {/* Console Redirect Card */}
-            <div className="ds-glass-panel rounded-3xl p-6 border border-border shadow-2xl bg-gradient-to-r from-muted/5 to-muted/20">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600">
-                  <ShieldCheck className="h-6 w-6" />
+            <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl transition-all duration-300 hover:shadow-2xl">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/5 blur-3xl pointer-events-none" />
+              <div className="relative z-10 flex flex-col sm:flex-row items-start gap-5">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 shadow-inner">
+                  <ShieldCheck className="h-7 w-7" />
                 </div>
-                <div className="space-y-1.5 flex-1">
-                  <h3 className="font-serif text-lg font-semibold text-foreground">Quản lý bảo mật tập trung</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-serif text-xl font-bold text-foreground">Quản lý bảo mật tập trung</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Hệ thống Nyxoris sử dụng giải pháp bảo mật tập trung thông qua **Keycloak Identity Server**. Tất cả thông tin nhạy cảm của bạn như mật khẩu và cấu hình bảo mật 2 lớp (2FA) đều được lưu trữ bảo mật độc lập tại đây.
+                    Hệ thống Nyxoris sử dụng giải pháp bảo mật tập trung thông qua <strong className="font-semibold text-foreground">Keycloak Identity Server</strong>. Tất cả thông tin nhạy cảm của bạn như mật khẩu và cấu hình bảo mật 2 lớp (2FA) đều được lưu trữ bảo mật độc lập tại đây.
                   </p>
-                  <div className="pt-4 flex flex-wrap gap-3">
-                    <Button asChild className="rounded-xl font-semibold h-11 px-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
+                  <div className="pt-2">
+                    <Button asChild variant="default" size="lg">
                       <a href={keycloakConsoleUrl} target="_blank" rel="noopener noreferrer">
                         <Key className="h-4 w-4 mr-2" />
                         {t("securityAndChangePassword")}
@@ -59,35 +60,43 @@ export function SecurityScreen() {
               <h4 className="font-serif text-base font-semibold">Các thiết lập bảo mật khả dụng tại Identity Server</h4>
               
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="flex gap-3 p-4 rounded-2xl bg-muted/10 border border-border/40">
-                  <Lock className="h-5 w-5 text-blue-500 shrink-0" />
+                <div className="transition-all duration-300 hover:scale-[1.01] flex gap-4 p-5 rounded-2xl bg-muted/10 border border-border/40 hover:border-border hover:bg-muted/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 shrink-0">
+                    <Lock className="h-5 w-5" />
+                  </div>
                   <div className="space-y-1">
-                    <h5 className="text-sm font-semibold">Thay đổi mật khẩu</h5>
-                    <p className="text-xs text-muted-foreground">Thiết lập mật khẩu mới có độ mạnh cao để chống lại các cuộc tấn công đoán mật khẩu.</p>
+                    <h5 className="text-sm font-semibold text-foreground">Thay đổi mật khẩu</h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Thiết lập mật khẩu mới có độ mạnh cao để chống lại các cuộc tấn công đoán mật khẩu.</p>
                   </div>
                 </div>
 
-                <div className="flex gap-3 p-4 rounded-2xl bg-muted/10 border border-border/40">
-                  <Smartphone className="h-5 w-5 text-emerald-500 shrink-0" />
+                <div className="transition-all duration-300 hover:scale-[1.01] flex gap-4 p-5 rounded-2xl bg-muted/10 border border-border/40 hover:border-border hover:bg-muted/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
+                    <Smartphone className="h-5 w-5" />
+                  </div>
                   <div className="space-y-1">
-                    <h5 className="text-sm font-semibold">Bảo mật hai lớp (2FA)</h5>
-                    <p className="text-xs text-muted-foreground">Kích hoạt OTP thông qua Google Authenticator hoặc FreeOTP để bảo vệ tài khoản tốt nhất.</p>
+                    <h5 className="text-sm font-semibold text-foreground">Bảo mật hai lớp (2FA)</h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Kích hoạt OTP thông qua Google Authenticator hoặc FreeOTP để bảo vệ tài khoản tốt nhất.</p>
                   </div>
                 </div>
 
-                <div className="flex gap-3 p-4 rounded-2xl bg-muted/10 border border-border/40">
-                  <History className="h-5 w-5 text-purple-500 shrink-0" />
+                <div className="transition-all duration-300 hover:scale-[1.01] flex gap-4 p-5 rounded-2xl bg-muted/10 border border-border/40 hover:border-border hover:bg-muted/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500 shrink-0">
+                    <History className="h-5 w-5" />
+                  </div>
                   <div className="space-y-1">
-                    <h5 className="text-sm font-semibold">Nhật ký truy cập</h5>
-                    <p className="text-xs text-muted-foreground">Theo dõi và kiểm tra thời gian, thiết bị, địa chỉ IP của tất cả các lần đăng nhập gần đây.</p>
+                    <h5 className="text-sm font-semibold text-foreground">Nhật ký truy cập</h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Theo dõi và kiểm tra thời gian, thiết bị, địa chỉ IP của tất cả các lần đăng nhập gần đây.</p>
                   </div>
                 </div>
 
-                <div className="flex gap-3 p-4 rounded-2xl bg-muted/10 border border-border/40">
-                  <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
+                <div className="transition-all duration-300 hover:scale-[1.01] flex gap-4 p-5 rounded-2xl bg-muted/10 border border-border/40 hover:border-border hover:bg-muted/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 shrink-0">
+                    <AlertCircle className="h-5 w-5" />
+                  </div>
                   <div className="space-y-1">
-                    <h5 className="text-sm font-semibold">Thu hồi phiên hoạt động</h5>
-                    <p className="text-xs text-muted-foreground">Đăng xuất từ xa khỏi các trình duyệt hoặc thiết bị cũ đang duy trì đăng nhập của bạn.</p>
+                    <h5 className="text-sm font-semibold text-foreground">Thu hồi phiên hoạt động</h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Đăng xuất từ xa khỏi các trình duyệt hoặc thiết bị cũ đang duy trì đăng nhập của bạn.</p>
                   </div>
                 </div>
               </div>
@@ -96,22 +105,30 @@ export function SecurityScreen() {
 
           {/* Right panel: Profile presence details */}
           <div className="lg:col-span-4">
-            <div className="ds-glass-panel rounded-3xl p-6 border border-border shadow-lg space-y-4">
-              <h3 className="font-serif text-lg font-semibold">Thông tin phiên hiện tại</h3>
-              <div className="space-y-3.5 text-sm">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Địa chỉ Email</span>
-                  <span className="font-medium text-foreground">{user?.email || "Chưa xác minh"}</span>
+            <div className="ds-glass-panel rounded-3xl p-6 border border-border shadow-lg space-y-6 relative overflow-hidden bg-card">
+              <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-2xl pointer-events-none" />
+              <h3 className="font-serif text-lg font-bold text-foreground pb-2 border-b border-border">Thông tin phiên hiện tại</h3>
+              <div className="space-y-4 text-sm">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">Địa chỉ Email</span>
+                  <span className="font-semibold text-foreground">{user?.email || "Chưa cập nhật"}</span>
                 </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Định danh User ID (Sub)</span>
-                  <span className="font-mono text-xs text-foreground select-all break-all">{user?.sub || "—"}</span>
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">Định danh User ID (Sub)</span>
+                  <span className="font-mono text-xs text-foreground/80 select-all break-all block p-2 rounded-xl bg-muted/20 border border-border/40">{user?.sub || "—"}</span>
                 </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Email Verified</span>
-                  <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 mt-1">
-                    {user?.email_verified ? "Đã xác minh" : "Chưa xác minh"}
-                  </span>
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">Email Verified</span>
+                  <div>
+                    <span className={cn(
+                      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold mt-1 border",
+                      user?.email_verified 
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
+                        : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                    )}>
+                      {user?.email_verified ? "Đã xác minh" : "Chưa xác minh"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

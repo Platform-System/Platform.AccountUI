@@ -1,6 +1,19 @@
 import * as React from "react";
-import { Button, DatePicker, ImageCropper, Input, ProfileHeader, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, cn } from '@platform-system/design-ui';
-import { Settings, Key } from "lucide-react";
+import {
+  Button,
+  DatePicker,
+  ImageCropper,
+  Input,
+  ProfileHeader,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+  cn
+} from '@platform-system/design-ui';
+import { Settings } from "lucide-react";
 import { useAccount } from "../hooks/use-account";
 import { useTranslations } from "../translations/vi";
 import { toast } from "sonner";
@@ -119,38 +132,76 @@ export function ProfileScreen() {
 
   React.useEffect(() => {
     if (identityId) {
+      const serverAvatarOriginal = profile.avatarOriginal;
+      const serverAvatarCrop = profile.avatarCrop;
+      const serverCoverOriginal = profile.coverOriginal;
+      const serverCoverCrop = profile.coverCrop;
+
       const original = localStorage.getItem("user_avatar_original_" + identityId);
       const stateStr = localStorage.getItem("user_avatar_crop_state_" + identityId);
       const originalCover = localStorage.getItem("user_cover_original_" + identityId);
       const coverStateStr = localStorage.getItem("user_cover_crop_state_" + identityId);
 
-      setTimeout(() => {
-        setCurrentOriginalImageUrl(original);
+      const savedAvatarUrl = localStorage.getItem("user_avatar_url_" + identityId);
+      const savedCoverUrl = localStorage.getItem("user_cover_url_" + identityId);
 
-        if (stateStr) {
-          try {
-            setInitialCropState(JSON.parse(stateStr));
-          } catch (e) {
-            console.error("Loi khi doc crop state tu localStorage:", e);
+      const currentAvatarUrlClean = profile.avatar ? profile.avatar.split("?")[0] : "";
+      const currentCoverUrlClean = profile.cover ? profile.cover.split("?")[0] : "";
+
+      const savedAvatarUrlClean = savedAvatarUrl ? savedAvatarUrl.split("?")[0] : "";
+      const savedCoverUrlClean = savedCoverUrl ? savedCoverUrl.split("?")[0] : "";
+
+      setTimeout(() => {
+        if (serverAvatarOriginal) {
+          setCurrentOriginalImageUrl(serverAvatarOriginal);
+          setInitialCropState(serverAvatarCrop || null);
+        } else if (original && currentAvatarUrlClean && currentAvatarUrlClean === savedAvatarUrlClean) {
+          setCurrentOriginalImageUrl(original);
+          if (stateStr) {
+            try {
+              setInitialCropState(JSON.parse(stateStr));
+            } catch {
+              setInitialCropState(null);
+            }
+          } else {
+            setInitialCropState(null);
           }
         } else {
+          setCurrentOriginalImageUrl(null);
           setInitialCropState(null);
         }
 
-        setCurrentOriginalCoverImageUrl(originalCover);
-
-        if (coverStateStr) {
-          try {
-            setInitialCoverCropState(JSON.parse(coverStateStr));
-          } catch (e) {
-            console.error("Loi khi doc cover crop state tu localStorage:", e);
+        if (serverCoverOriginal) {
+          setCurrentOriginalCoverImageUrl(serverCoverOriginal);
+          setInitialCoverCropState(serverCoverCrop || null);
+        } else if (originalCover && currentCoverUrlClean && currentCoverUrlClean === savedCoverUrlClean) {
+          setCurrentOriginalCoverImageUrl(originalCover);
+          if (coverStateStr) {
+            try {
+              setInitialCoverCropState(JSON.parse(coverStateStr));
+            } catch {
+              setInitialCoverCropState(null);
+            }
+          } else {
+            setInitialCoverCropState(null);
           }
         } else {
+          setCurrentOriginalCoverImageUrl(null);
           setInitialCoverCropState(null);
         }
       }, 0);
     }
-  }, [identityId, isAvatarModalOpen, isCoverModalOpen]);
+  }, [
+    identityId,
+    isAvatarModalOpen,
+    isCoverModalOpen,
+    profile.avatar,
+    profile.cover,
+    profile.avatarOriginal,
+    profile.avatarCrop,
+    profile.coverOriginal,
+    profile.coverCrop
+  ]);
 
   const handleToggleEdit = async () => {
     if (isEditingProfile) {
@@ -187,17 +238,12 @@ export function ProfileScreen() {
     setIsEditingProfile(false);
   };
 
-  const keycloakConsoleUrl = `${import.meta.env.VITE_KEYCLOAK_URL}/realms/${import.meta.env.VITE_KEYCLOAK_REALM}/account`;
+
 
   return (
     <div className="relative z-10 text-foreground">
       <div className="mx-auto max-w-none">
-        <div className="mb-8">
-          <h1 className="font-serif text-3xl font-bold sm:text-4xl">{t("systemProfile")}</h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            {t("systemProfileDesc")}
-          </p>
-        </div>
+
 
         <div className="ds-glass-panel rounded-3xl p-6 shadow-2xl sm:p-8">
           <div className="flex flex-col">
@@ -211,29 +257,18 @@ export function ProfileScreen() {
               onCoverClick={() => setIsCoverModalOpen(true)}
               actions={
                 <>
-                  <Button
-                    variant="outline"
-                    className="rounded-xl border-dashed h-9 text-xs md:text-sm md:h-10 flex-none"
-                    asChild
-                  >
-                    <a href={keycloakConsoleUrl} target="_blank" rel="noopener noreferrer">
-                      <Key className="h-4 w-4" />
-                      <span className="hidden lg:inline">{t("securityAndChangePassword")}</span>
-                      <span className="inline lg:hidden">{t("securityAndChangePasswordShort")}</span>
-                    </a>
-                  </Button>
                   {isEditingProfile && (
                     <Button
-                      variant="outline"
-                      className="rounded-xl font-semibold h-9 text-xs md:text-sm md:h-10 flex-none border-destructive text-destructive hover:bg-destructive/10"
+                      variant="danger-ghost"
+                      className="h-9 text-xs md:text-sm md:h-10 flex-none"
                       onClick={handleCancelEdit}
                     >
                       {t("cancel")}
                     </Button>
                   )}
                   <Button
-                    variant={isEditingProfile ? "default" : "default"}
-                    className="rounded-xl font-semibold h-9 text-xs md:text-sm md:h-10 flex-none"
+                    variant="default"
+                    className="h-9 text-xs md:text-sm md:h-10 flex-none"
                     onClick={handleToggleEdit}
                   >
                     <Settings className="h-4 w-4" />
@@ -433,6 +468,7 @@ export function ProfileScreen() {
       </div>
 
       <ImageCropper
+        key="profile-avatar-cropper"
         open={isAvatarModalOpen}
         onOpenChange={setIsAvatarModalOpen}
         currentImageUrl={profile.avatar}
@@ -449,11 +485,30 @@ export function ProfileScreen() {
             formData.append("altText", "Profile Avatar");
             formData.append("file", file);
 
+            if (cropState) {
+              formData.append("cropZoom", cropState.zoom.toString());
+              formData.append("cropX", cropState.x.toString());
+              formData.append("cropY", cropState.y.toString());
+            }
+
+            if (originalBase64) {
+              if (originalBase64.startsWith("data:")) {
+                const originalFile = dataURLtoFile(originalBase64, "original_avatar.jpg");
+                formData.append("originalFile", originalFile);
+              } else {
+                formData.append("originalUrl", originalBase64);
+              }
+            }
+
             await apiClient.post(`/api/identity/users/me/images/avatar`, formData, {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
             });
+
+            toast.success(t("updateAvatarSuccess"));
+            const refetched = await refetchProfile();
+            const newUrl = refetched.data?.avatarUrl;
 
             try {
               localStorage.setItem("user_avatar_" + identityId, croppedBase64);
@@ -462,6 +517,9 @@ export function ProfileScreen() {
               }
               if (cropState) {
                 localStorage.setItem("user_avatar_crop_state_" + identityId, JSON.stringify(cropState));
+              }
+              if (newUrl) {
+                localStorage.setItem("user_avatar_url_" + identityId, newUrl);
               }
             } catch (storageError) {
               console.warn("Storage quota exceeded, unable to cache avatar image locally:", storageError);
@@ -472,8 +530,6 @@ export function ProfileScreen() {
             if (cropState) {
               setInitialCropState(cropState);
             }
-            toast.success(t("updateAvatarSuccess"));
-            refetchProfile();
           } catch (err) {
             console.error(err);
             toast.error(t("updateAvatarError"));
@@ -482,6 +538,7 @@ export function ProfileScreen() {
       />
 
       <ImageCropper
+        key="profile-cover-cropper"
         open={isCoverModalOpen}
         onOpenChange={setIsCoverModalOpen}
         currentImageUrl={profile.cover}
@@ -499,11 +556,30 @@ export function ProfileScreen() {
             formData.append("altText", "Profile Cover Banner");
             formData.append("file", file);
 
+            if (cropState) {
+              formData.append("cropZoom", cropState.zoom.toString());
+              formData.append("cropX", cropState.x.toString());
+              formData.append("cropY", cropState.y.toString());
+            }
+
+            if (originalBase64) {
+              if (originalBase64.startsWith("data:")) {
+                const originalFile = dataURLtoFile(originalBase64, "original_cover.jpg");
+                formData.append("originalFile", originalFile);
+              } else {
+                formData.append("originalUrl", originalBase64);
+              }
+            }
+
             await apiClient.post(`/api/identity/users/me/images/cover`, formData, {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
             });
+
+            toast.success(t("updateCoverSuccess"));
+            const refetched = await refetchProfile();
+            const newUrl = refetched.data?.coverUrl;
 
             try {
               localStorage.setItem("user_cover_" + identityId, croppedBase64);
@@ -512,6 +588,9 @@ export function ProfileScreen() {
               }
               if (cropState) {
                 localStorage.setItem("user_cover_crop_state_" + identityId, JSON.stringify(cropState));
+              }
+              if (newUrl) {
+                localStorage.setItem("user_cover_url_" + identityId, newUrl);
               }
             } catch (storageError) {
               console.warn("Storage quota exceeded, unable to cache cover image locally:", storageError);
@@ -522,8 +601,6 @@ export function ProfileScreen() {
             if (cropState) {
               setInitialCoverCropState(cropState);
             }
-            toast.success(t("updateCoverSuccess"));
-            refetchProfile();
           } catch (err) {
             console.error(err);
             toast.error(t("updateCoverError"));
@@ -531,19 +608,21 @@ export function ProfileScreen() {
         }}
       />
 
+
+
       {isEditingProfile && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-background/80 backdrop-blur-md border border-border shadow-2xl rounded-2xl px-4 py-3 animate-in fade-in slide-in-from-bottom-4 duration-300">
           <span className="text-xs font-medium text-muted-foreground mr-2 hidden sm:inline">{t("youAreEditingProfile")}</span>
           <Button
-            variant="outline"
-            className="rounded-xl h-9 text-xs md:text-sm border-destructive text-destructive hover:bg-destructive/10"
+            variant="danger-ghost"
+            className="h-9 text-xs md:text-sm"
             onClick={handleCancelEdit}
           >
             {t("cancel")}
           </Button>
           <Button
             variant="default"
-            className="rounded-xl h-9 text-xs md:text-sm font-semibold"
+            className="h-9 text-xs md:text-sm"
             onClick={handleToggleEdit}
           >
             {t("saveChanges")}

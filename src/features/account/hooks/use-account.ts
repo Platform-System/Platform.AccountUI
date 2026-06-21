@@ -20,6 +20,19 @@ export interface PagedResult<T> {
   pageSize: number;
 }
 
+export interface UserMediaResponse {
+  type: string;
+  fileName: string;
+  contentType: string;
+  size: number;
+  altText: string;
+  url?: string | null;
+  originalUrl?: string | null;
+  cropZoom?: number | null;
+  cropX?: number | null;
+  cropY?: number | null;
+}
+
 export interface AccountProfileResponse {
   id?: string | null;
   identityId?: string | null;
@@ -27,6 +40,7 @@ export interface AccountProfileResponse {
   email?: string | null;
   avatarUrl?: string | null;
   coverUrl?: string | null;
+  introUrl?: string | null;
   createdAt?: string | null;
   displayName?: string | null;
   bio?: string | null;
@@ -36,6 +50,21 @@ export interface AccountProfileResponse {
   phoneNumber?: string | null;
   firstName?: string | null;
   lastName?: string | null;
+  
+  avatarOriginalUrl?: string | null;
+  avatarCropZoom?: number | null;
+  avatarCropX?: number | null;
+  avatarCropY?: number | null;
+
+  coverOriginalUrl?: string | null;
+  coverCropZoom?: number | null;
+  coverCropX?: number | null;
+  coverCropY?: number | null;
+
+  introOriginalUrl?: string | null;
+  introCropZoom?: number | null;
+  introCropX?: number | null;
+  introCropY?: number | null;
 }
 
 export interface WalletResponse {
@@ -85,18 +114,39 @@ interface UserProfileDetails {
 }
 
 async function fetchFullProfile(profile: AccountProfileResponse): Promise<AccountProfileResponse> {
-  const [avatarRes, coverRes, profileRes] = await Promise.allSettled([
-    apiClient.get<Result<{ url?: string | null }>>("/api/identity/users/me/images/avatar"),
-    apiClient.get<Result<{ url?: string | null }>>("/api/identity/users/me/images/cover"),
+  const t = Date.now();
+  const [avatarRes, coverRes, introRes, profileRes] = await Promise.allSettled([
+    apiClient.get<Result<UserMediaResponse>>(`/api/identity/users/me/images/avatar?t=${t}`),
+    apiClient.get<Result<UserMediaResponse>>(`/api/identity/users/me/images/cover?t=${t}`),
+    apiClient.get<Result<UserMediaResponse>>(`/api/identity/users/me/images/intro?t=${t}`),
     apiClient.get<Result<UserProfileDetails>>("/api/identity/users/me/profile")
   ]);
 
-  if (avatarRes.status === "fulfilled" && avatarRes.value.data?.success && avatarRes.value.data.data?.url) {
-    profile.avatarUrl = avatarRes.value.data.data.url;
+  if (avatarRes.status === "fulfilled" && avatarRes.value.data?.success && avatarRes.value.data.data) {
+    const data = avatarRes.value.data.data;
+    if (data.url) profile.avatarUrl = `${data.url}?t=${t}`;
+    profile.avatarOriginalUrl = data.originalUrl;
+    profile.avatarCropZoom = data.cropZoom;
+    profile.avatarCropX = data.cropX;
+    profile.avatarCropY = data.cropY;
   }
 
-  if (coverRes.status === "fulfilled" && coverRes.value.data?.success && coverRes.value.data.data?.url) {
-    profile.coverUrl = coverRes.value.data.data.url;
+  if (coverRes.status === "fulfilled" && coverRes.value.data?.success && coverRes.value.data.data) {
+    const data = coverRes.value.data.data;
+    if (data.url) profile.coverUrl = `${data.url}?t=${t}`;
+    profile.coverOriginalUrl = data.originalUrl;
+    profile.coverCropZoom = data.cropZoom;
+    profile.coverCropX = data.cropX;
+    profile.coverCropY = data.cropY;
+  }
+
+  if (introRes.status === "fulfilled" && introRes.value.data?.success && introRes.value.data.data) {
+    const data = introRes.value.data.data;
+    if (data.url) profile.introUrl = `${data.url}?t=${t}`;
+    profile.introOriginalUrl = data.originalUrl;
+    profile.introCropZoom = data.cropZoom;
+    profile.introCropX = data.cropX;
+    profile.introCropY = data.cropY;
   }
 
   if (typeof window !== "undefined") {
@@ -127,6 +177,20 @@ async function fetchFullProfile(profile: AccountProfileResponse): Promise<Accoun
         profile.coverUrl = localCover;
       }
     }
+
+    if (profile.introUrl && profile.introUrl.includes("/local-intro-fallback/")) {
+      const localIntro = localStorage.getItem("user_intro_" + profile.identityId);
+      if (localIntro) {
+        profile.introUrl = localIntro;
+      } else {
+        profile.introUrl = "";
+      }
+    } else if (!profile.introUrl && profile.identityId) {
+      const localIntro = localStorage.getItem("user_intro_" + profile.identityId);
+      if (localIntro) {
+        profile.introUrl = localIntro;
+      }
+    }
   }
 
   if (profileRes.status === "fulfilled" && profileRes.value.data?.success && profileRes.value.data.data) {
@@ -150,7 +214,7 @@ export function useAccount() {
     queryKey: ["account-profile"],
     queryFn: async (): Promise<AccountProfileResponse | null> => {
       try {
-        const response = await apiClient.get<Result<AccountProfileResponse>>("/api/identity/users/me");
+        const response = await apiClient.get<Result<AccountProfileResponse>>(`/api/identity/users/me?t=${Date.now()}`);
         if (response.data && response.data.success && response.data.data) {
           return await fetchFullProfile(response.data.data);
         }
@@ -270,6 +334,7 @@ export function useAccount() {
     if (profileData) {
       let avatar = profileData.avatarUrl || "";
       let cover = profileData.coverUrl || "";
+      let intro = profileData.introUrl || "";
 
       if (typeof window !== "undefined" && profileData.identityId) {
         if (!avatar || avatar.includes("/local-avatar-fallback/")) {
@@ -286,6 +351,14 @@ export function useAccount() {
             cover = localCover;
           } else {
             cover = "";
+          }
+        }
+        if (!intro || intro.includes("/local-intro-fallback/")) {
+          const localIntro = localStorage.getItem("user_intro_" + profileData.identityId);
+          if (localIntro) {
+            intro = localIntro;
+          } else {
+            intro = "";
           }
         }
       }
@@ -306,6 +379,19 @@ export function useAccount() {
         firstName: profileData.firstName || "",
         lastName: profileData.lastName || "",
         cover: cover,
+        intro: intro,
+        avatarOriginal: profileData.avatarOriginalUrl || "",
+        avatarCrop: (profileData.avatarCropZoom !== undefined && profileData.avatarCropZoom !== null)
+          ? { zoom: profileData.avatarCropZoom, x: profileData.avatarCropX || 0, y: profileData.avatarCropY || 0 }
+          : null,
+        coverOriginal: profileData.coverOriginalUrl || "",
+        coverCrop: (profileData.coverCropZoom !== undefined && profileData.coverCropZoom !== null)
+          ? { zoom: profileData.coverCropZoom, x: profileData.coverCropX || 0, y: profileData.coverCropY || 0 }
+          : null,
+        introOriginal: profileData.introOriginalUrl || "",
+        introCrop: (profileData.introCropZoom !== undefined && profileData.introCropZoom !== null)
+          ? { zoom: profileData.introCropZoom, x: profileData.introCropX || 0, y: profileData.introCropY || 0 }
+          : null,
       });
     }
   }, [profileData]);

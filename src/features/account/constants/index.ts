@@ -12,6 +12,13 @@ export interface AccountProfile {
   firstName: string;
   lastName: string;
   cover: string;
+  intro: string;
+  avatarOriginal?: string;
+  avatarCrop?: { zoom: number; x: number; y: number } | null;
+  coverOriginal?: string;
+  coverCrop?: { zoom: number; x: number; y: number } | null;
+  introOriginal?: string;
+  introCrop?: { zoom: number; x: number; y: number } | null;
 }
 
 export const DEFAULT_PROFILE: AccountProfile = {
@@ -28,4 +35,11 @@ export const DEFAULT_PROFILE: AccountProfile = {
   firstName: "",
   lastName: "",
   cover: "",
+  intro: "",
+  avatarOriginal: "",
+  avatarCrop: null,
+  coverOriginal: "",
+  coverCrop: null,
+  introOriginal: "",
+  introCrop: null,
 };

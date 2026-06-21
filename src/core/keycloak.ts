@@ -14,12 +14,12 @@ configurePlatformApi({
     clientId: getEnv('VITE_KEYCLOAK_CLIENT_ID'),
     redirectUri: accountAppUrl || (typeof window !== 'undefined' ? window.location.origin : undefined),
   },
-  onUnauthorized: () => {
-    const kc = getKeycloak();
-    if (kc) {
-      kc.logout({ redirectUri: accountAppUrl || window.location.origin });
-    }
-  }
+  // onUnauthorized: () => {
+  //   const kc = getKeycloak();
+  //   if (kc) {
+  //     kc.logout({ redirectUri: accountAppUrl || window.location.origin });
+  //   }
+  // }
 });
 
 export const keycloak = getKeycloak()!;
