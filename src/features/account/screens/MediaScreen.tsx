@@ -251,21 +251,21 @@ export function MediaScreen() {
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">Trang cá nhân</span>
                 <div className="relative rounded-2xl border border-border overflow-hidden bg-muted/20 pb-4">
                   {/* Cover */}
-                  <div className="h-20 w-full bg-muted relative overflow-hidden">
+                  <div className="h-20 w-full bg-zinc-100 relative overflow-hidden">
                     {profile.cover ? (
                       <img src={profile.cover} alt="Cover Preview" className="size-full object-cover" />
                     ) : (
-                      <div className="size-full bg-gradient-to-r from-blue-500/20 to-purple-500/20" />
+                      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:8px_14px]" />
                     )}
                   </div>
                   {/* Avatar & Name & Info */}
                   <div className="px-4 pt-2 flex items-start gap-2">
                     {/* Avatar Wrapper with negative margin */}
-                    <div className="relative -mt-10 size-16 rounded-full overflow-hidden border-2 border-background bg-muted shadow-md flex items-center justify-center shrink-0 z-10">
+                    <div className="relative -mt-10 size-16 rounded-full overflow-hidden border-2 border-background bg-zinc-100 shadow-md flex items-center justify-center shrink-0 z-10">
                       {profile.avatar ? (
                         <img src={profile.avatar} alt="Avatar Preview" className="size-full object-cover" />
                       ) : (
-                        <div className="size-full flex items-center justify-center bg-muted text-muted-foreground">
+                        <div className="size-full flex items-center justify-center bg-zinc-100 text-muted-foreground">
                           <User size={24} />
                         </div>
                       )}
@@ -296,21 +296,30 @@ export function MediaScreen() {
                   {profile.intro ? (
                     <img src={profile.intro} alt="Welcome Preview" className="absolute inset-0 size-full object-cover" />
                   ) : (
-                    <div className="absolute inset-0 size-full bg-gradient-to-br from-indigo-950 to-slate-900" />
+                    <div className="absolute inset-0 size-full bg-gradient-to-br from-white via-zinc-100 to-zinc-300">
+                      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:12px_12px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_60%,transparent_100%)] opacity-70" />
+                    </div>
                   )}
+                  
                   {/* Dark overlay at bottom only */}
-                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent z-10" />
+                  {profile.intro && (
+                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent z-10" />
+                  )}
 
                   {/* Bottom Left Profile Info */}
-                  <div className="relative z-10 flex items-center gap-1 text-white text-left">
+                  <div className={`relative z-10 flex items-center gap-1 text-left transition-colors duration-500 ${profile.intro ? 'text-white' : 'text-zinc-800'}`}>
                     {profile.avatar ? (
-                      <img src={profile.avatar} alt="Avatar Preview" className="size-8 rounded-full border border-white/40 object-cover shadow-md shrink-0" />
+                      <img
+                        src={profile.avatar}
+                        alt="Avatar Preview"
+                        className={`size-8 rounded-full border object-cover shadow-md shrink-0 transition-all duration-500 ${profile.intro ? 'border-white/40' : 'border-zinc-200'}`}
+                      />
                     ) : (
-                      <div className="size-8 rounded-full border border-white/40 bg-white/10 backdrop-blur-sm flex items-center justify-center shadow-md shrink-0">
-                        <User size={12} className="text-white" />
+                      <div className={`size-8 rounded-full border flex items-center justify-center shadow-md shrink-0 transition-all duration-500 ${profile.intro ? 'border-white/40 bg-white/10 backdrop-blur-sm text-white' : 'border-zinc-200 bg-zinc-50 text-zinc-500'}`}>
+                        <User size={12} />
                       </div>
                     )}
-                    <span className="text-[10px] font-bold tracking-tight drop-shadow-md truncate max-w-[120px]">
+                    <span className={`text-[10px] font-bold tracking-tight truncate max-w-[120px] transition-colors duration-500 ${profile.intro ? 'drop-shadow-md text-white' : 'text-zinc-800'}`}>
                       {profile.displayName || profile.name || "Tài khoản Nyxoris"}
                     </span>
                   </div>

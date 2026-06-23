@@ -210,7 +210,7 @@ export function useAccount() {
   const [profile, setProfile] = React.useState<AccountProfile>(DEFAULT_PROFILE);
   const [isEditingProfile, setIsEditingProfile] = React.useState(false);
 
-  const { data: profileData, refetch: refetchProfile } = useQuery({
+  const { data: profileData, refetch: refetchProfile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["account-profile"],
     queryFn: async (): Promise<AccountProfileResponse | null> => {
       try {
@@ -415,6 +415,7 @@ export function useAccount() {
 
   return {
     profile,
+    isLoadingProfile,
     identityId: profileData?.identityId || "",
     refetchProfile,
     isEditingProfile,
