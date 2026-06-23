@@ -2,10 +2,7 @@ import React from 'react';
 import { Spinner } from '@platform-system/design-ui';
 import { keycloak } from './keycloak';
 import { AuthContext, type AuthUser } from './auth-context';
-
-const getEnv = (key: string): string => {
-  return (window as unknown as Record<string, Record<string, string>>).__ENV__?.[key] || import.meta.env[key] || '';
-};
+import { getEnv } from '@/shared/config/env';
 
 const accountAppUrl = getEnv('VITE_PUBLIC_ACCOUNT_URL');
 

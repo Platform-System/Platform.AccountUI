@@ -1,6 +1,7 @@
 import { Button, cn } from '@platform-system/design-ui';
 import { useTranslations } from "../translations/vi";
-import { useAuth } from "../../../core/auth-context";
+import { useAuth } from "@/core/auth-context";
+import { getEnv } from '@/shared/config/env';
 import { 
   ShieldCheck, 
   Key, 
@@ -15,7 +16,7 @@ export function SecurityScreen() {
   const t = useTranslations("Account");
   const { user } = useAuth();
   
-  const keycloakConsoleUrl = `${import.meta.env.VITE_KEYCLOAK_URL}/realms/${import.meta.env.VITE_KEYCLOAK_REALM}/account`;
+  const keycloakConsoleUrl = `${getEnv('VITE_KEYCLOAK_URL')}/realms/${getEnv('VITE_KEYCLOAK_REALM')}/account`;
 
   return (
     <div className="relative z-10 text-foreground">

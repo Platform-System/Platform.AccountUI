@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './core/AuthProvider';
-import { AccountLayout } from './layouts/AccountLayout';
+import { AccountLayout } from '@/shared/layout/AccountLayout';
 import { WelcomeScreen } from './features/account/screens/WelcomeScreen';
 import { ProfileScreen } from './features/account/screens/ProfileScreen';
 import { WalletScreen } from './features/account/screens/WalletScreen';

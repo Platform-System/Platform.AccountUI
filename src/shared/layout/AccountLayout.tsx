@@ -34,8 +34,8 @@ import {
   ChevronRight,
   Wallpaper
 } from 'lucide-react';
-import { useAuth } from '../core/auth-context';
-import { useAccount } from '../features/account/hooks/use-account';
+import { useAuth } from '@/core/auth-context';
+import { useAccount } from '@/features/account/hooks/use-account';
 
 const portals = [
   { id: 'customer', name: 'Cổng khách hàng', url: 'https://nyxoris.com', icon: <Globe size={16} />, active: true },
@@ -80,8 +80,6 @@ export const AccountLayout: React.FC = () => {
     { icon: <Key size={18} />, label: 'Bảo mật & Đổi mật khẩu', path: '/security' },
   ];
 
-
-
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-background font-['Plus_Jakarta_Sans',sans-serif] animate-in fade-in duration-500">
       <HeaderLayout
@@ -108,7 +106,7 @@ export const AccountLayout: React.FC = () => {
                       className="cursor-pointer font-normal p-2.5 min-w-0 focus:bg-[rgb(var(--store-accent-rgb)/0.05)] focus:text-foreground w-full"
                     >
                       <UserProfileCard
-                        name={profile.displayName || user?.name || "Người dùng"}
+                        name={profile.displayName || (user?.preferred_username as string) || (user?.name as string) || "Người dùng"}
                         avatarSrc={profile.avatar || user?.picture || ""}
                         subtext="Gói: Miễn phí"
                         showChevron={true}
@@ -267,7 +265,7 @@ export const AccountLayout: React.FC = () => {
               );
             })}
           </div>
-          
+
 
         </div>
 
