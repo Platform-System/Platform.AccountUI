@@ -3,15 +3,11 @@ import {
   cn,
   Button,
   Toaster as SonnerToaster,
-  UserIdentity,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
+
   Avatar,
   AvatarImage,
   AvatarFallback,
@@ -24,7 +20,6 @@ import {
   Menu,
   Globe,
   ShoppingBag,
-  Shield,
   User,
   Wallet,
   Key,
@@ -32,15 +27,18 @@ import {
   Image,
   ChevronLeft,
   ChevronRight,
-  Wallpaper
+  Wallpaper,
+  X,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/core/auth-context';
 import { useAccount } from '@/features/account/hooks/use-account';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const portals = [
   { id: 'customer', name: 'Cổng khách hàng', url: 'https://nyxoris.com', icon: <Globe size={16} />, active: true },
   { id: 'merchant', name: 'Cổng người bán', url: 'https://merchant.nyxoris.com', icon: <ShoppingBag size={16} />, active: true },
-  { id: 'admin', name: 'Cổng quản trị', url: 'https://admin.nyxoris.com', icon: <Shield size={16} />, active: true },
+  { id: 'community', name: 'Cổng cộng đồng', url: '#', icon: <MessageSquare size={16} />, active: false },
 ];
 
 export const AccountLayout: React.FC = () => {
@@ -150,23 +148,31 @@ export const AccountLayout: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Mobile Navigation Trigger */}
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="lg:hidden rounded-xl size-[42px] max-sm:size-[36px]"
-                >
-                  <Menu size={18} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] flex flex-col p-0">
-                <SheetHeader className="border-b border-border p-6 flex flex-row items-center justify-start">
-                  <span className="text-xl font-sans font-black tracking-tighter text-foreground leading-none">Nyxoris</span>
-                </SheetHeader>
-                <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-1">
+            {/* Mobile Navigation Trigger Button */}
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="lg:hidden rounded-xl size-[42px] max-sm:size-[36px]"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </Button>
+          </>
+        }
+      >
+        {/* Mobile menu dropdown */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-secondary/95 backdrop-blur-xl border-t border-border lg:hidden"
+            >
+              <div className="p-6 flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
                   {menuItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
@@ -189,34 +195,12 @@ export const AccountLayout: React.FC = () => {
                     );
                   })}
                 </div>
-                <div className="border-t border-border p-6 flex flex-col gap-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <UserIdentity
-                      name={profile.displayName || user?.name || user?.preferred_username || user?.email || 'Tài khoản Nyxoris'}
-                      avatarSrc={profile.avatar || user?.picture || null}
-                      avatarAlt={profile.displayName || user?.name || 'User Avatar'}
-                      showPresence
-                    />
-                    <Button
-                      type="button"
-                      variant="danger-ghost"
-                      size="icon"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        logout();
-                      }}
-                      className="h-[38px] w-[38px] shrink-0 rounded-xl"
-                      title="Đăng xuất"
-                    >
-                      <LogOut size={17} />
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </>
-        }
-      />
+
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </HeaderLayout>
 
       {/* Container below Topbar containing Sidebar and Main Content */}
       <div className="relative flex flex-1 overflow-hidden">
